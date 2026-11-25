@@ -67,21 +67,6 @@ body {
     animation: pulse-subtle 0.3s ease-in-out;
 }
 
-.footer-qr {
-    display: grid;
-    justify-items: start;
-    gap: 0.75rem;
-    margin-top: 1.5rem;
-}
-
-.footer-qr-image {
-    width: 10rem;
-    height: 10rem;
-    padding: 0.5rem;
-    border-radius: 0.75rem;
-    background-color: #fff;
-    object-fit: contain;
-}
 
 /* Barras de desplazamiento coherentes con la identidad visual */
 ::-webkit-scrollbar {
