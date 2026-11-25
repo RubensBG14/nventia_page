@@ -1,0 +1,130 @@
+body {
+    background-color: #F8FAFC;
+    color: #1E293B;
+}
+
+/* Fondo suave inspirado en una cuadrícula tecnológica */
+.bg-tech-grid {
+    background-image: radial-gradient(rgba(95, 111, 123, 0.14) 1px, transparent 1px);
+    background-size: 28px 28px;
+}
+
+/* Movimiento del panel lateral del carrito */
+.drawer-transition {
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dashboard-mockup {
+    isolation: isolate;
+}
+
+.mockup-demo-highlight {
+    position: relative;
+    z-index: 1;
+    outline: 2px solid rgba(56, 189, 248, 0.8);
+    box-shadow: 0 0 0 4px rgba(13, 124, 199, 0.2);
+    transition: outline-color 180ms ease, box-shadow 180ms ease;
+}
+
+.demo-cursor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    width: 24px;
+    height: 24px;
+    opacity: 0;
+    pointer-events: none;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.45));
+    transform: translate3d(var(--demo-cursor-x, -40px), var(--demo-cursor-y, -40px), 0);
+    transition: transform 650ms cubic-bezier(0.2, 0.7, 0.3, 1), opacity 180ms ease;
+}
+
+.dashboard-mockup.is-demo-running .demo-cursor {
+    opacity: 1;
+}
+
+.demo-cursor svg {
+    width: 100%;
+    height: 100%;
+}
+
+.demo-cursor.is-clicking {
+    animation: cursor-click 240ms ease-in-out;
+}
+
+@keyframes cursor-click {
+    50% { scale: 0.78; }
+}
+
+@keyframes pulse-subtle {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+}
+
+/* Resalta el contador cuando cambia la cantidad de productos */
+.badge-pop {
+    animation: pulse-subtle 0.3s ease-in-out;
+}
+
+.footer-qr {
+    display: grid;
+    justify-items: start;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.footer-qr-image {
+    width: 10rem;
+    height: 10rem;
+    padding: 0.5rem;
+    border-radius: 0.75rem;
+    background-color: #fff;
+    object-fit: contain;
+}
+
+/* Barras de desplazamiento coherentes con la identidad visual */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #94A3B8;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #5F6F7B;
+}
+
+/* Mantiene el enfoque visible para usuarios que navegan con teclado */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+    outline: 3px solid rgba(13, 124, 199, 0.35);
+    outline-offset: 3px;
+}
+
+/* Evita movimientos extensos cuando el usuario prefiere menos animación */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .demo-cursor {
+        display: none;
+    }
+
+    .mockup-demo-highlight {
+        outline: none;
+        box-shadow: none;
+        transition: none;
+    }
+}

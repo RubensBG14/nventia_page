@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NVENTIA | Control sencillo de inventarios</title>
+    <!-- Framework visual generado localmente -->
+    <link rel="stylesheet" href="tailwind.css">
+    <!-- Tipografías principales -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="antialiased selection:bg-nventia-blue selection:text-white">
+
+    <!-- Cabecera y navegación -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                
+                <!-- Marca NVENTIA -->
+                <a href="#inicio" class="flex items-center group focus:outline-none" aria-label="NVENTIA Inicio">
+                    <svg class="h-8 sm:h-9 w-auto transition-transform duration-200 group-hover:scale-[1.02]" viewBox="0 0 385 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- N -->
+                        <path d="M8 58V16C8 11.5 11.5 8 16 8C19.2 8 21.8 9.5 23.6 12L44 40V9H55V52C55 56.5 51.5 60 47 60C43.8 60 41.2 58.5 39.4 56L19 28V58H8Z" fill="#5F6F7B"/>
+                        <!-- V -->
+                        <path d="M62 9H74.5L88.5 45.5L102.5 9H115L95 57.5C93.8 60 91.5 61 88.5 61C85.5 61 83.2 60 82 57.5L62 9Z" fill="#5F6F7B"/>
+                        <!-- E -->
+                        <path d="M122 17C122 12.5 125.5 9 130 9H163V19.5H133.5V29H159V39H133.5V48.5H163.5V59H130C125.5 59 122 55.5 122 51V17Z" fill="#5F6F7B"/>
+                        <!-- N -->
+                        <path d="M172 58V16C172 11.5 175.5 8 180 8C183.2 8 185.8 9.5 187.6 12L208 40V9H219V52C219 56.5 215.5 60 211 60C207.8 60 205.2 58.5 203.4 56L183 28V58H172Z" fill="#5F6F7B"/>
+                        <!-- T (Azul) -->
+                        <path d="M227 9H277V19.5H258V59H246V19.5H227V9Z" fill="#0D7CC7"/>
+                        <!-- I (Azul) -->
+                        <path d="M286 9H298V59H286V9Z" fill="#0D7CC7"/>
+                        <!-- A (Azul) -->
+                        <path d="M308 59L328.5 11.5C329.8 9.2 332 8 335 8C338 8 340.2 9.2 341.5 11.5L362 59H349.5L345.2 48.5H324.8L320.5 59H308ZM328.6 38.5H341.4L335 22.5L328.6 38.5Z" fill="#0D7CC7"/>
+                    </svg>
+                </a>
+
+                <!-- Navegación principal -->
+                <nav class="hidden md:flex items-center space-x-2 bg-slate-100/80 p-1.5 rounded-full border border-slate-200/60">
+                    <a href="#inicio" class="nav-link px-5 py-2 rounded-full text-sm font-semibold text-nventia-blue bg-white shadow-xs transition-all">
+                        Inicio
+                    </a>
+                    <a href="#servicios" class="nav-link px-5 py-2 rounded-full text-sm font-medium text-nventia-gray hover:text-nventia-slate transition-all">
+                        Servicios
+                    </a>
+                    <a href="#precios" class="nav-link px-5 py-2 rounded-full text-sm font-medium text-nventia-gray hover:text-nventia-slate transition-all">
+                        Precios
+                    </a>
+                </nav>
+
+                <!-- Acciones rápidas -->
+                <div class="flex items-center gap-3">
+                    <!-- Carrito -->
+                    <button type="button" data-action="open-cart" class="relative flex items-center justify-center w-11 h-11 rounded-full bg-nventia-slate hover:bg-nventia-dark text-white shadow-md transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-nventia-blue focus:ring-offset-2" aria-label="Abrir carrito de compras">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        <span id="cart-badge" class="absolute -top-1 -right-1 min-w-[22px] h-[22px] px-1.5 rounded-full bg-nventia-blue text-white text-xs font-bold flex items-center justify-center border-2 border-white shadow-xs">
+                            0
+                        </span>
+                    </button>
+
+                    <!-- Navegación móvil -->
+                    <button type="button" data-action="toggle-mobile-menu" class="md:hidden p-2.5 rounded-xl text-nventia-slate hover:bg-slate-100 focus:outline-none" aria-label="Menú">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menú desplegable para dispositivos móviles -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-200 px-4 pt-3 pb-5 space-y-2 shadow-lg">
+            <a href="#inicio" data-action="toggle-mobile-menu" class="block px-4 py-2.5 rounded-xl text-base font-semibold text-nventia-blue bg-nventia-blueLight">Inicio</a>
+            <a href="#servicios" data-action="toggle-mobile-menu" class="block px-4 py-2.5 rounded-xl text-base font-medium text-nventia-slate hover:bg-slate-50">Servicios</a>
+            <a href="#precios" data-action="toggle-mobile-menu" class="block px-4 py-2.5 rounded-xl text-base font-medium text-nventia-slate hover:bg-slate-50">Precios</a>
+        </div>
+    </header>
+
+    <!-- Presentación principal -->
+    <section id="inicio" class="relative overflow-hidden bg-white bg-tech-grid pt-14 pb-20 lg:pt-20 lg:pb-28 border-b border-slate-200/70">
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
+                
+                <!-- Mensaje de bienvenida -->
+                <div class="lg:col-span-7 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200/90 text-nventia-gray text-xs sm:text-sm font-semibold mb-6">
+                        <span class="w-2 h-2 rounded-full bg-nventia-blue animate-pulse"></span>
+                        Una solución clara para cuidar tus activos
+                    </div>
+
+                    <h1 class="font-display text-4xl sm:text-5xl lg:text-[54px] font-extrabold tracking-tight text-nventia-slate leading-[1.12] mb-6">
+                        Tus activos, siempre <span class="text-nventia-gray">bajo</span> <span class="text-nventia-blue">control</span>
+                    </h1>
+
+                    <!-- Propuesta principal -->
+                    <p class="text-lg sm:text-xl text-nventia-slate/90 leading-relaxed mb-8 max-w-2xl mx-auto lg:mx-0">
+                        NVENTIA reúne tus equipos, bienes y infraestructura en un solo lugar, ayudándote a conocer qué tienes, dónde está y quién lo utiliza.
+                    </p>
+
+                    <!-- Botones CTA -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                        <a href="#precios" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-nventia-blue hover:bg-nventia-blueHover text-white font-semibold text-base shadow-lg shadow-nventia-blue/25 transition-all duration-200 hover:-translate-y-0.5">
+                            Encontrar mi plan
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                            </svg>
+                        </a>
+                        <a href="#servicios" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white hover:bg-slate-50 text-nventia-slate border-2 border-slate-200 hover:border-nventia-gray font-semibold text-base transition-all duration-200">
+                            Conocer cómo funciona
+                        </a>
+                    </div>
+
+                    <!-- Indicadores de confianza rápidos -->
+                    <div class="mt-10 pt-8 border-t border-slate-200/80 grid grid-cols-3 gap-4 max-w-lg mx-auto lg:mx-0">
+                        <div>
+                            <p class="text-2xl sm:text-3xl font-extrabold text-nventia-slate">99.9%</p>
+                            <p class="text-xs sm:text-sm text-nventia-gray font-medium">Trazabilidad exacta</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl sm:text-3xl font-extrabold text-nventia-blue">-65%</p>
+                            <p class="text-xs sm:text-sm text-nventia-gray font-medium">Tiempo en auditorías</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl sm:text-3xl font-extrabold text-nventia-slate">100%</p>
+                            <p class="text-xs sm:text-sm text-nventia-gray font-medium">Datos centralizados</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Vista Previa Interactiva del Dashboard NVENTIA -->
+                <div class="lg:col-span-5">
+                    <div id="dashboard-mockup" class="dashboard-mockup relative bg-nventia-slate rounded-2xl p-5 sm:p-6 shadow-2xl border border-slate-700 text-white">
+                        <!-- Barra superior tipo ventana software -->
+                        <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-700/80">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-rose-400"></span>
+                                <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+                                <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+                                <span class="ml-2 text-xs font-mono text-slate-400">nventia-cloud // activos-ti</span>
+                            </div>
+                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-nventia-blue/20 text-sky-300 border border-nventia-blue/40">
+                                En tiempo real
+                            </span>
+                        </div>
+
+                        <!-- Selector interactivo de vista en el mockup -->
+                        <div class="grid grid-cols-3 gap-2 bg-nventia-dark p-1 rounded-xl mb-5">
+                            <button type="button" data-action="switch-tab" data-tab="todos" id="tab-todos" class="mockup-tab py-1.5 px-2 rounded-lg text-xs font-semibold bg-nventia-blue text-white transition">
+                                Todos (1,420)
+                            </button>
+                            <button type="button" data-action="switch-tab" data-tab="ti" id="tab-ti" class="mockup-tab py-1.5 px-2 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition">
+                                Infraestructura TI
+                            </button>
+                            <button type="button" data-action="switch-tab" data-tab="fijos" id="tab-fijos" class="mockup-tab py-1.5 px-2 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition">
+                                Activos Fijos
+                            </button>
+                        </div>
+
+                        <!-- Métricas dinámicas del panel -->
+                        <div class="grid grid-cols-2 gap-3 mb-5">
+                            <div class="bg-nventia-dark/90 p-3.5 rounded-xl border border-slate-700/70">
+                                <span class="text-xs text-slate-400 block">Activos Homologados</span>
+                                <span id="mock-metric-1" class="text-xl font-bold text-white mt-0.5 block">1,420 uds</span>
+                                <span class="text-[11px] text-emerald-400 font-medium">✓ 100% etiquetados QR/RFID</span>
+                            </div>
+                            <div class="bg-nventia-dark/90 p-3.5 rounded-xl border border-slate-700/70">
+                                <span class="text-xs text-slate-400 block">Valor Patrimonial</span>
+                                <span id="mock-metric-2" class="text-xl font-bold text-sky-400 mt-0.5 block">$482,900</span>
+                                <span class="text-[11px] text-slate-300 font-medium">Conciliación automática</span>
+                            </div>
+                        </div>
+
+                        <!-- Ejemplo de activos registrados -->
+                        <div id="mock-asset-list" class="space-y-2.5 text-xs">
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/70 border border-slate-700/50">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-nventia-blue/20 text-sky-400 flex items-center justify-center font-bold">SRV</div>
+                                    <div>
+                                        <p class="font-semibold text-white">Servidor Dell PowerEdge R750</p>
+                                        <p class="text-slate-400 text-[11px]">ID: NV-TI-0041 • Data Center Norte</p>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-1 rounded-md bg-emerald-500/15 text-emerald-300 font-semibold">Activo</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/70 border border-slate-700/50">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-nventia-gray/30 text-slate-200 flex items-center justify-center font-bold">LAP</div>
+                                    <div>
+                                        <p class="font-semibold text-white">MacBook Pro 16" M3 Max (x24)</p>
+                                        <p class="text-slate-400 text-[11px]">ID: NV-TI-0189 • Ingeniería</p>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-1 rounded-md bg-sky-500/15 text-sky-300 font-semibold">Asignado</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/70 border border-slate-700/50">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-nventia-blue/20 text-sky-400 flex items-center justify-center font-bold">NET</div>
+                                    <div>
+                                        <p class="font-semibold text-white">Switch Cisco Catalyst 9300</p>
+                                        <p class="text-slate-400 text-[11px]">ID: NV-IF-0092 • Rack Principal</p>
+                                    </div>
+                                </div>
+                                <span class="px-2 py-1 rounded-md bg-emerald-500/15 text-emerald-300 font-semibold">Verificado</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Beneficios principales -->
+    <section id="servicios" class="py-20 lg:py-24 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Encabezado de Sección -->
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="inline-block px-3.5 py-1 rounded-full bg-nventia-blueLight text-nventia-blue text-xs font-bold uppercase tracking-wider mb-3">
+                    Lo que puedes lograr con NVENTIA
+                </span>
+                <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-nventia-slate mb-4">
+                    Menos búsquedas, menos errores y mejor seguimiento
+                </h2>
+                <p class="text-nventia-gray text-base sm:text-lg">
+                    Organizamos tu inventario para que tu equipo encuentre la información correcta y pueda tomar decisiones con confianza.
+                </p>
+            </div>
+
+            <!-- Tres formas de simplificar la operación -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+                
+                <!-- Pilares del servicio -->
+                <div class="group bg-white rounded-3xl p-8 border border-slate-200/90 shadow-soft hover:shadow-card hover:border-nventia-blue/50 transition-all duration-300 flex flex-col justify-between hover:-translate-y-1">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-nventia-blueLight text-nventia-blue flex items-center justify-center mb-6 group-hover:bg-nventia-blue group-hover:text-white transition-colors duration-300">
+                            <!-- Icono Velocidad / Automatización -->
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-display text-xl font-bold text-nventia-slate mb-3">
+                            Haz más con menos esfuerzo
+                        </h3>
+                        <p class="text-nventia-gray leading-relaxed text-sm sm:text-base mb-5">
+                            Registra entradas y movimientos sin recorrer hojas de cálculo. Con códigos QR y RFID, las auditorías toman menos tiempo y dejan menos lugar a errores.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100">
+                        <ul class="space-y-2 text-xs sm:text-sm text-nventia-slate font-medium">
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-nventia-blue"></span>
+                                Conteos rápidos con el celular
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-nventia-blue"></span>
+                                Responsables claros para cada activo
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Estandarización -->
+                <div class="group bg-nventia-blue rounded-3xl p-8 text-white shadow-popular transition-all duration-300 flex flex-col justify-between hover:-translate-y-1">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-white/15 text-white flex items-center justify-center mb-6 group-hover:bg-white group-hover:text-nventia-blue transition-colors duration-300">
+                            <!-- Icono Homologación / Estandarización -->
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-display text-xl font-bold text-white mb-3">
+                            Mantén la información ordenada
+                        </h3>
+                        <p class="text-sky-50 leading-relaxed text-sm sm:text-base mb-5">
+                            Usa los mismos nombres y criterios en todas las áreas y sucursales. Así, cada persona verá datos consistentes y fáciles de comparar.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-white/20">
+                        <ul class="space-y-2 text-xs sm:text-sm text-white font-medium">
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                                Un catálogo común para todos
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                                Inventario físico alineado con contabilidad
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Centralización -->
+                <div class="group bg-nventia-slate rounded-3xl p-8 text-white shadow-xl transition-all duration-300 flex flex-col justify-between hover:-translate-y-1">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-nventia-dark text-nventia-blue flex items-center justify-center mb-6 group-hover:bg-nventia-blue group-hover:text-white transition-colors duration-300">
+                            <!-- Icono Centralización / Infraestructura -->
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-display text-xl font-bold text-white mb-3">
+                            Consulta todo desde un solo lugar
+                        </h3>
+                        <p class="text-slate-300 leading-relaxed text-sm sm:text-base mb-5">
+                            Reúne equipos, servidores, software, mobiliario y herramientas en una vista compartida. Consulta su ubicación y estado sin preguntar a varias personas.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-700">
+                        <ul class="space-y-2 text-xs sm:text-sm text-slate-200 font-medium">
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-nventia-blue"></span>
+                                Una vista para todas tus sedes
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-nventia-blue"></span>
+                                Avisos para cuidar mantenimientos y garantías
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Planes disponibles -->
+    <section id="precios" class="relative py-20 lg:py-28 bg-gradient-to-b from-white via-sky-50/40 to-slate-100/70 overflow-hidden">
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Presentación de planes -->
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-nventia-slate mb-3">
+                    Planes y Suscripciones NVENTIA
+                </h2>
+                <!-- Ayuda para elegir -->
+                <p class="text-lg sm:text-xl text-nventia-gray font-medium">
+                    Compara las opciones y elige la que mejor acompañe a tu equipo hoy.
+                </p>
+            </div>
+
+            <!-- Grid de las 3 Tarjetas Principales -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-6xl mx-auto">
+                
+                <!-- PLAN 1: BASIC -->
+                <div class="bg-white rounded-3xl p-8 sm:p-9 border border-slate-200/90 shadow-soft flex flex-col justify-between transition-transform duration-300 hover:-translate-y-1">
+                    <div>
+                        <span class="block text-xs font-extrabold tracking-widest uppercase text-nventia-gray mb-3">
+                            BASIC
+                        </span>
+                        <div class="flex items-baseline gap-1.5 mb-2">
+                            <span class="font-display text-4xl sm:text-5xl font-extrabold text-slate-900">$100</span>
+                            <span class="text-nventia-gray font-medium text-base">/ semana</span>
+                        </div>
+                        <p class="text-sm text-nventia-gray pb-6 mb-6 border-b border-slate-100">
+                            Para empezar con control y visibilidad.
+                        </p>
+
+                        <ul class="space-y-4 text-sm text-slate-700 mb-8">
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-nventia-blue shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Registro de hasta 200 activos</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-nventia-blue shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Panel de control básico</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-nventia-blue shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Reportes mensuales en PDF</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-nventia-blue shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Soporte por correo (48 h)</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-nventia-blue shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>1 usuario administrador</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button type="button" data-action="add" data-product-id="plan-basic" class="w-full py-3.5 px-6 rounded-xl bg-white hover:bg-nventia-blueLight text-nventia-blue font-bold text-sm border-2 border-nventia-blue flex items-center justify-center gap-2 transition-all duration-200 active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        Agregar al Carrito
+                    </button>
+                </div>
+
+                <!-- PLAN 2: PRO (MÁS POPULAR - Destacado en Azul Vibrante) -->
+                <div class="relative bg-nventia-blue rounded-3xl p-8 sm:p-9 text-white shadow-popular flex flex-col justify-between lg:-translate-y-4 transition-transform duration-300 hover:-translate-y-5">
+                    <!-- Badge Superior MÁS POPULAR -->
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2">
+                        <span class="inline-block px-4 py-1.5 rounded-full bg-nventia-slate text-white text-[11px] font-extrabold tracking-widest uppercase shadow-md">
+                            MÁS POPULAR
+                        </span>
+                    </div>
+
+                    <div>
+                        <span class="block text-xs font-extrabold tracking-widest uppercase text-sky-100 mb-3 mt-1">
+                            PRO
+                        </span>
+                        <div class="flex items-baseline gap-1.5 mb-2">
+                            <span class="font-display text-4xl sm:text-5xl font-extrabold text-white">$600</span>
+                            <span class="text-sky-100 font-medium text-base">/ mes</span>
+                        </div>
+                        <p class="text-sm text-sky-50 pb-6 mb-6 border-b border-white/20">
+                            El favorito de equipos de TI en crecimiento.
+                        </p>
+
+                        <ul class="space-y-4 text-sm text-white mb-8">
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-white shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span class="font-bold">Activos ilimitados</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-white shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Dashboard en tiempo real</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-white shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Soporte prioritario (8 h)</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-white shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Hasta 10 usuarios</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-white shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>API REST incluida</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button type="button" data-action="add" data-product-id="plan-pro" class="w-full py-3.5 px-6 rounded-xl bg-white hover:bg-sky-50 text-nventia-blue font-bold text-sm shadow-lg flex items-center justify-center gap-2 transition-all duration-200 active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        Agregar al Carrito
+                    </button>
+                </div>
+
+                <!-- PLAN 3: ULTRA (Tarjeta en Gris Rata Oscuro / Pizarra #2B3440) -->
+                <div class="bg-nventia-slate rounded-3xl p-8 sm:p-9 text-white shadow-xl flex flex-col justify-between transition-transform duration-300 hover:-translate-y-1">
+                    <div>
+                        <span class="block text-xs font-extrabold tracking-widest uppercase text-slate-400 mb-3">
+                            ULTRA
+                        </span>
+                        <div class="flex items-baseline gap-1.5 mb-2">
+                            <span class="font-display text-4xl sm:text-5xl font-extrabold text-white">$2,500</span>
+                            <span class="text-slate-300 font-medium text-base">/ año</span>
+                        </div>
+                        <p class="text-sm text-slate-300 pb-6 mb-6 border-b border-slate-700">
+                            Automatización completa a escala empresarial.
+                        </p>
+
+                        <ul class="space-y-4 text-sm text-slate-200 mb-8">
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-nventia-blue shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span class="font-bold text-white">Todo lo de Pro, sin límites</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-nventia-blue shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Arquitectura de datos a medida</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-nventia-blue shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>SLA garantizado 99.9%</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-nventia-blue shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Usuarios ilimitados</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-nventia-blue shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                <span>Gestor de cuenta exclusivo</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button type="button" data-action="add" data-product-id="plan-ultra" class="w-full py-3.5 px-6 rounded-xl bg-nventia-blue hover:bg-nventia-blueHover text-white font-bold text-sm shadow-lg flex items-center justify-center gap-2 transition-all duration-200 active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        Agregar al Carrito
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Complementos Opcionales de Hardware y Etiquetado (Equipamiento de Inventario) -->
+            <div class="mt-20 max-w-6xl mx-auto">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+                    <div>
+                        <h3 class="font-display text-xl font-bold text-nventia-slate">
+                            Complementos de Hardware e Identificación (Opcional)
+                        </h3>
+                        <p class="text-sm text-nventia-gray">
+                            Equipa tu operación física con insumos homologados listos para sincronizar con NVENTIA.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Addon 1 -->
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs flex items-center justify-between gap-4 hover:border-nventia-gray/60 transition">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-12 h-12 rounded-xl bg-slate-100 text-nventia-slate flex items-center justify-center shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm text-nventia-slate">Kit 500 Etiquetas QR/Metal</h4>
+                                <p class="text-xs text-nventia-gray">Alta resistencia para activos TI</p>
+                                <span class="inline-block mt-1 font-extrabold text-sm text-nventia-blue">$85 <span class="text-xs font-normal text-nventia-gray">pago único</span></span>
+                            </div>
+                        </div>
+                        <button type="button" data-action="add" data-product-id="addon-qr" class="p-2.5 rounded-xl bg-slate-100 hover:bg-nventia-blue text-nventia-slate hover:text-white transition shrink-0" title="Agregar al carrito">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Addon 2 -->
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs flex items-center justify-between gap-4 hover:border-nventia-gray/60 transition">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-12 h-12 rounded-xl bg-nventia-blueLight text-nventia-blue flex items-center justify-center shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm text-nventia-slate">Terminal Lector RFID/QR</h4>
+                                <p class="text-xs text-nventia-gray">Escáner industrial inalámbrico</p>
+                                <span class="inline-block mt-1 font-extrabold text-sm text-nventia-blue">$320 <span class="text-xs font-normal text-nventia-gray">pago único</span></span>
+                            </div>
+                        </div>
+                        <button type="button" data-action="add" data-product-id="addon-scanner" class="p-2.5 rounded-xl bg-slate-100 hover:bg-nventia-blue text-nventia-slate hover:text-white transition shrink-0" title="Agregar al carrito">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Addon 3 -->
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs flex items-center justify-between gap-4 hover:border-nventia-gray/60 transition">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-12 h-12 rounded-xl bg-slate-100 text-nventia-slate flex items-center justify-center shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm text-nventia-slate">Migración y Homologación</h4>
+                                <p class="text-xs text-nventia-gray">Carga inicial y limpieza de BD</p>
+                                <span class="inline-block mt-1 font-extrabold text-sm text-nventia-blue">$250 <span class="text-xs font-normal text-nventia-gray">servicio</span></span>
+                            </div>
+                        </div>
+                        <button type="button" data-action="add" data-product-id="addon-migration" class="p-2.5 rounded-xl bg-slate-100 hover:bg-nventia-blue text-nventia-slate hover:text-white transition shrink-0" title="Agregar al carrito">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Pie de página -->
+    <footer class="bg-nventia-slate text-slate-300 border-t border-slate-700/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-10 border-b border-slate-700/70">
+                
+                <!-- Presentación de la marca -->
+                <div class="md:col-span-5">
+                    <div class="mb-4 inline-block bg-white px-3.5 py-2 rounded-xl">
+                        <svg class="h-6 w-auto" viewBox="0 0 385 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 58V16C8 11.5 11.5 8 16 8C19.2 8 21.8 9.5 23.6 12L44 40V9H55V52C55 56.5 51.5 60 47 60C43.8 60 41.2 58.5 39.4 56L19 28V58H8Z" fill="#5F6F7B"/>
+                            <path d="M62 9H74.5L88.5 45.5L102.5 9H115L95 57.5C93.8 60 91.5 61 88.5 61C85.5 61 83.2 60 82 57.5L62 9Z" fill="#5F6F7B"/>
+                            <path d="M122 17C122 12.5 125.5 9 130 9H163V19.5H133.5V29H159V39H133.5V48.5H163.5V59H130C125.5 59 122 55.5 122 51V17Z" fill="#5F6F7B"/>
+                            <path d="M172 58V16C172 11.5 175.5 8 180 8C183.2 8 185.8 9.5 187.6 12L208 40V9H219V52C219 56.5 215.5 60 211 60C207.8 60 205.2 58.5 203.4 56L183 28V58H172Z" fill="#5F6F7B"/>
+                            <path d="M227 9H277V19.5H258V59H246V19.5H227V9Z" fill="#0D7CC7"/>
+                            <path d="M286 9H298V59H286V9Z" fill="#0D7CC7"/>
+                            <path d="M308 59L328.5 11.5C329.8 9.2 332 8 335 8C338 8 340.2 9.2 341.5 11.5L362 59H349.5L345.2 48.5H324.8L320.5 59H308ZM328.6 38.5H341.4L335 22.5L328.6 38.5Z" fill="#0D7CC7"/>
+                        </svg>
+                    </div>
+                    <p class="text-sm text-slate-300 leading-relaxed max-w-md">
+                        Una forma sencilla de saber qué tienes, dónde está y quién lo utiliza.
+                    </p>
+                </div>
+
+                <!-- Accesos rápidos -->
+                <div class="md:col-span-3">
+                    <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Explorar</h4>
+                    <ul class="space-y-2.5 text-sm">
+                        <li><a href="#inicio" class="hover:text-sky-400 transition">Inicio</a></li>
+                        <li><a href="#servicios" class="hover:text-sky-400 transition">Servicios y Pilares</a></li>
+                        <li><a href="#precios" class="hover:text-sky-400 transition">Planes y Precios</a></li>
+                        <li><button type="button" data-action="open-cart" class="hover:text-sky-400 transition">Ver mi selección</button></li>
+                    </ul>
+                </div>
+
+                <!-- Información de contacto -->
+                <div class="md:col-span-4">
+                    <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-4">Hablemos</h4>
+                    <ul class="space-y-2.5 text-sm text-slate-300">
+                        <li class="flex items-center gap-2.5">
+                            <svg class="w-4 h-4 text-nventia-blue shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            <span>contacto@nventia.io</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <svg class="w-4 h-4 text-nventia-blue shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                            </svg>
+                            <span>+52 (55) 4160-8900</span>
+                        </li>
+                        <li class="flex items-center gap-2.5">
+                            <svg class="w-4 h-4 text-nventia-blue shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            <span>Ciudad de México, México • Cobertura LATAM</span>
+                        </li>
+                    </ul>
+                    <div class="footer-qr">
+                        <p class="text-sm font-semibold text-white">Escanea nuestro código QR</p>
+                        <img
+                            src="qr-nventia.png"
+                            alt="Código QR de NVENTIA"
+                            class="footer-qr-image"
+                            width="160"
+                            height="160"
+                            loading="lazy"
+                        >
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-400">
+                <p>© 2026 NVENTIA. Todos los derechos reservados.</p>
+                <div class="flex gap-6">
+                    <span>Seguridad ISO/IEC 27001</span>
+                    <span>Infraestructura Cloud 99.9% SLA</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Resumen de selección -->
+    <div id="cart-backdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden transition-opacity opacity-0"></div>
+    
+    <aside id="cart-drawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl z-50 translate-x-full drawer-transition flex flex-col">
+        <!-- Header del Carrito -->
+        <div class="px-6 py-5 bg-nventia-slate text-white flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-nventia-blue flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-display font-bold text-base">Tu selección NVENTIA</h3>
+                    <p id="cart-subtitle" class="text-xs text-slate-300">0 artículos seleccionados</p>
+                </div>
+            </div>
+            <button type="button" data-action="close-cart" class="p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700 transition" aria-label="Cerrar carrito">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Cuerpo / Lista de Ítems del Carrito -->
+        <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/70">
+            <!-- Se renderiza dinámicamente con JS -->
+        </div>
+
+        <!-- Footer del Carrito: Desglose de Costos y Botón Proceder al Pago -->
+        <div id="cart-footer" class="p-6 bg-white border-t border-slate-200 hidden">
+            <div class="space-y-2 text-sm mb-5">
+                <div class="flex justify-between text-nventia-gray">
+                    <span>Subtotal</span>
+                    <span id="cart-subtotal" class="font-semibold text-slate-800">$0.00</span>
+                </div>
+                <div class="flex justify-between text-nventia-gray">
+                    <span>IVA (16%)</span>
+                    <span id="cart-tax" class="font-semibold text-slate-800">$0.00</span>
+                </div>
+                <div class="pt-2.5 border-t border-slate-200 flex justify-between items-baseline">
+                    <span class="font-bold text-base text-nventia-slate">Total a Pagar</span>
+                    <span id="cart-total" class="font-display font-extrabold text-2xl text-nventia-blue">$0.00</span>
+                </div>
+            </div>
+
+            <button type="button" data-action="checkout" class="w-full py-3.5 px-6 rounded-xl bg-nventia-blue hover:bg-nventia-blueHover text-white font-bold text-sm shadow-lg shadow-nventia-blue/25 flex items-center justify-center gap-2 transition">
+                <span>Continuar con mi compra</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                </svg>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Datos de compra y confirmación -->
+    <div id="checkout-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-slate-200 overflow-hidden my-8">
+            
+            <!-- Vista 1: Formulario de Facturación y Pago -->
+            <div id="checkout-form-view">
+                <div class="px-6 py-5 bg-nventia-slate text-white flex items-center justify-between">
+                    <div>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-sky-400">Casi listo</span>
+                        <h3 class="font-display font-bold text-lg">Completa tu suscripción</h3>
+                    </div>
+                    <button type="button" data-action="close-checkout" class="p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <form id="checkout-form" class="p-6 sm:p-7 space-y-4">
+                    <!-- Resumen compacto -->
+                    <div class="p-4 rounded-2xl bg-nventia-blueLight/70 border border-nventia-blue/20 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-nventia-gray">Total de la orden (IVA incluido)</p>
+                            <p id="checkout-summary-items" class="text-xs text-nventia-slate mt-0.5">1 plan seleccionado</p>
+                        </div>
+                        <span id="checkout-summary-total" class="font-display font-extrabold text-xl text-nventia-blue">$0.00</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-nventia-slate mb-1.5">Nombre completo *</label>
+                            <input type="text" id="cust-name" required placeholder="Ej. Carlos Mendoza" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-nventia-blue focus:ring-2 focus:ring-nventia-blue/20">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-nventia-slate mb-1.5">Empresa *</label>
+                            <input type="text" id="cust-company" required placeholder="Ej. Grupo Industrial Norte S.A." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-nventia-blue focus:ring-2 focus:ring-nventia-blue/20">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-nventia-slate mb-1.5">Correo electrónico *</label>
+                            <input type="email" id="cust-email" required placeholder="carlos@empresa.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:border-nventia-blue focus:ring-2 focus:ring-nventia-blue/20">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-nventia-slate mb-1.5">RFC / ID Fiscal (Opcional)</label>
+                            <input type="text" id="cust-taxid" placeholder="GIN940512ABC" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm uppercase focus:outline-none focus:border-nventia-blue focus:ring-2 focus:ring-nventia-blue/20">
+                        </div>
+                    </div>
+
+                    <!-- Forma de pago -->
+                    <div>
+                        <label class="block text-xs font-bold text-nventia-slate mb-2">¿Cómo prefieres pagar? *</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="payment-method" value="Tarjeta Corporativa / Crédito" checked data-payment-method="card" class="peer sr-only">
+                                <div class="p-3 rounded-xl border-2 border-slate-200 peer-checked:border-nventia-blue peer-checked:bg-nventia-blueLight/50 text-xs font-bold text-nventia-slate flex items-center gap-2 transition">
+                                    <svg class="w-4 h-4 text-nventia-blue" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                    </svg>
+                                    Tarjeta Crédito/Débito
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="payment-method" value="Transferencia SPEI / Wire" data-payment-method="transfer" class="peer sr-only">
+                                <div class="p-3 rounded-xl border-2 border-slate-200 peer-checked:border-nventia-blue peer-checked:bg-nventia-blueLight/50 text-xs font-bold text-nventia-slate flex items-center gap-2 transition">
+                                    <svg class="w-4 h-4 text-nventia-gray" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
+                                    </svg>
+                                    Transferencia SPEI
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Datos de tarjeta -->
+                    <div id="card-fields" class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-nventia-gray mb-1">Número de Tarjeta</label>
+                            <input type="text" maxlength="19" placeholder="4532 •••• •••• 8890" value="4532 8910 4412 8890" class="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-sm font-mono focus:outline-none focus:border-nventia-blue">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-bold text-nventia-gray mb-1">Expiración (MM/AA)</label>
+                                <input type="text" maxlength="5" placeholder="09/29" value="09/29" class="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-sm font-mono focus:outline-none focus:border-nventia-blue">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-nventia-gray mb-1">CVC</label>
+                                <input type="password" maxlength="4" placeholder="•••" value="842" class="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-sm font-mono focus:outline-none focus:border-nventia-blue">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Info transferencia SPEI -->
+                    <div id="transfer-fields" class="hidden p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-nventia-slate space-y-1">
+                        <p class="font-bold">Cuenta CLABE NVENTIA Sistemas S.A. de C.V.:</p>
+                        <p class="font-mono text-nventia-blue font-bold text-sm">0121 8001 5489 2201 44</p>
+                        <p class="text-nventia-gray">Al confirmar, recibirás los siguientes pasos por correo electrónico.</p>
+                    </div>
+
+                    <div class="pt-2 flex flex-col sm:flex-row gap-3">
+                        <button type="button" data-action="close-checkout" class="sm:w-1/3 py-3 px-4 rounded-xl border border-slate-300 text-nventia-gray font-semibold text-sm hover:bg-slate-50 transition">
+                            Volver
+                        </button>
+                        <button type="submit" class="sm:w-2/3 py-3 px-6 rounded-xl bg-nventia-blue hover:bg-nventia-blueHover text-white font-bold text-sm shadow-lg shadow-nventia-blue/25 transition flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Confirmar compra
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Vista 2: Pantalla de Confirmación de Pedido -->
+            <div id="checkout-success-view" class="hidden p-7 sm:p-8 text-center">
+                <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-9 h-9" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+                <span class="inline-block px-3 py-1 rounded-full bg-nventia-blueLight text-nventia-blue text-xs font-extrabold tracking-wider uppercase mb-2">
+                    Todo listo
+                </span>
+                <h3 class="font-display text-2xl font-extrabold text-nventia-slate mb-1">
+                    Gracias por elegir NVENTIA
+                </h3>
+                <p id="order-number-display" class="text-sm font-mono font-bold text-nventia-gray mb-5">
+                    Orden #NV-2026-0000
+                </p>
+
+                <!-- Recibo detallado -->
+                <div id="receipt-box" class="text-left bg-slate-50 rounded-2xl p-5 border border-slate-200 mb-6 text-xs space-y-2.5">
+                    <!-- Se llena dinámicamente -->
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button type="button" data-action="copy-receipt" class="flex-1 py-3 px-4 rounded-xl bg-nventia-slate hover:bg-nventia-dark text-white font-semibold text-sm flex items-center justify-center gap-2 transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                        </svg>
+                        Copiar resumen
+                    </button>
+                    <button type="button" data-action="finish-reset" class="flex-1 py-3 px-4 rounded-xl bg-nventia-blue hover:bg-nventia-blueHover text-white font-bold text-sm transition">
+                        Volver al inicio
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Aviso breve -->
+    <div id="toast-notification" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-nventia-slate text-white px-5 py-3.5 rounded-2xl shadow-xl border border-slate-700 flex items-center gap-3">
+            <div class="w-7 h-7 rounded-full bg-nventia-blue flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
+            <div>
+                <p id="toast-title" class="text-sm font-bold">Agregado al carrito</p>
+                <p id="toast-desc" class="text-xs text-slate-300">Plan NVENTIA añadido correctamente</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== LÓGICA JAVASCRIPT DE LA TIENDA Y UI ==================== -->
+    <script src="app.js"></script>
+</body>
+</html>
