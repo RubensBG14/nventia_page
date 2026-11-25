@@ -56,7 +56,7 @@
 
     // La selección actual vive aquí mientras el usuario navega por la página
     let cart = [];
-    let lastReceiptText = '';
+    let lastOrder = null;
     let toastTimeout;
 
     const getElement = (id) => document.getElementById(id);
@@ -284,9 +284,23 @@
             </div>
         `;
 
-        lastReceiptText = `RESUMEN DE TU ORDEN NVENTIA\nOrden: #${orderId}\nFecha: ${dateStr}\nCliente: ${name} - ${company}\nCorreo: ${email}\nRFC: ${taxId}\nPago: ${paymentMethod}\n----------------------------\n`
-            + cart.map(item => `${item.quantity}x ${item.name}: ${formatCurrency(item.price * item.quantity)}`).join('\n')
-            + `\n----------------------------\nSubtotal: ${formatCurrency(subtotal)}\nIVA (16%): ${formatCurrency(tax)}\nTOTAL: ${formatCurrency(total)}`;
+        lastOrder = {
+            orderId,
+            date: dateStr,
+            name,
+            company,
+            email,
+            taxId,
+            paymentMethod,
+            items: cart.map(({ name: itemName, quantity, price }) => ({
+                name: itemName,
+                quantity,
+                price
+            })),
+            subtotal,
+            tax,
+            total
+        };
 
         getElement('checkout-form-view').classList.add('hidden');
         getElement('checkout-success-view').classList.remove('hidden');
@@ -294,20 +308,150 @@
         updateCartUI();
     }
 
-    function copyReceipt() {
-        const tempTextarea = document.createElement('textarea');
-        tempTextarea.value = lastReceiptText;
-        document.body.appendChild(tempTextarea);
-        tempTextarea.select();
-
-        try {
-            document.execCommand('copy');
-            showToast('Resumen copiado', 'Ya puedes pegarlo o guardarlo');
-        } catch {
-            showToast('Tu compra quedó registrada', 'Puedes revisar todos los detalles aquí');
+    function generateReceipt() {
+        if (!lastOrder) {
+            showToast('No hay una compra para descargar', 'Completa una compra antes de generar el comprobante');
+            return;
         }
 
-        document.body.removeChild(tempTextarea);
+        if (!window.jspdf || typeof window.jspdf.jsPDF !== 'function') {
+            showToast('No se pudo generar el PDF', 'Recarga la página e inténtalo de nuevo');
+            return;
+        }
+
+        const pdf = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const margin = 18;
+        const contentWidth = pageWidth - margin * 2;
+        let y = 22;
+
+        pdf.setProperties({
+            title: `Comprobante ${lastOrder.orderId}`,
+            subject: 'Comprobante de compra NVENTIA',
+            author: 'NVENTIA'
+        });
+
+        function ensureSpace(height) {
+            if (y + height > pageHeight - margin) {
+                pdf.addPage();
+                y = margin;
+            }
+        }
+
+        function addDetail(label, value) {
+            const labelWidth = 42;
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(10);
+            const lines = pdf.splitTextToSize(String(value), contentWidth - labelWidth);
+            const rowHeight = Math.max(6, lines.length * 5);
+            ensureSpace(rowHeight);
+
+            pdf.setFont('helvetica', 'bold');
+            pdf.setTextColor(43, 52, 64);
+            pdf.text(label, margin, y);
+            pdf.setFont('helvetica', 'normal');
+            pdf.setTextColor(71, 85, 105);
+            pdf.text(lines, margin + labelWidth, y);
+            y += rowHeight + 2;
+        }
+
+        function addSectionHeading(title) {
+            ensureSpace(12);
+            y += 4;
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(12);
+            pdf.setTextColor(43, 52, 64);
+            pdf.text(title, margin, y);
+            y += 7;
+        }
+
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(20);
+        pdf.setTextColor(43, 52, 64);
+        pdf.text('NVENTIA', margin, y);
+        pdf.setFontSize(11);
+        pdf.setTextColor(13, 124, 199);
+        pdf.text('COMPROBANTE DE COMPRA', pageWidth - margin, y, { align: 'right' });
+        y += 7;
+
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(9);
+        pdf.setTextColor(95, 111, 123);
+        pdf.text('Control y seguimiento de inventario', margin, y);
+        y += 5;
+        pdf.setDrawColor(13, 124, 199);
+        pdf.setLineWidth(0.7);
+        pdf.line(margin, y, pageWidth - margin, y);
+        y += 9;
+
+        addDetail('Orden:', lastOrder.orderId);
+        addDetail('Fecha:', lastOrder.date);
+
+        addSectionHeading('Datos del cliente');
+        addDetail('Nombre:', lastOrder.name);
+        addDetail('Empresa:', lastOrder.company);
+        addDetail('Correo:', lastOrder.email);
+        addDetail('RFC / ID fiscal:', lastOrder.taxId);
+        addDetail('Método de pago:', lastOrder.paymentMethod);
+
+        addSectionHeading('Detalle de compra');
+        ensureSpace(10);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(9);
+        pdf.setTextColor(95, 111, 123);
+        pdf.text('Cant.', margin, y);
+        pdf.text('Descripción', margin + 16, y);
+        pdf.text('Precio', pageWidth - margin - 31, y, { align: 'right' });
+        pdf.text('Importe', pageWidth - margin, y, { align: 'right' });
+        y += 3;
+        pdf.setDrawColor(203, 213, 225);
+        pdf.setLineWidth(0.3);
+        pdf.line(margin, y, pageWidth - margin, y);
+        y += 6;
+
+        lastOrder.items.forEach((item) => {
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(9);
+            const descriptionLines = pdf.splitTextToSize(item.name, contentWidth - 80);
+            const rowHeight = Math.max(8, descriptionLines.length * 4.5 + 2);
+            ensureSpace(rowHeight);
+
+            pdf.setTextColor(43, 52, 64);
+            pdf.text(String(item.quantity), margin, y);
+            pdf.text(descriptionLines, margin + 16, y);
+            pdf.text(formatCurrency(item.price), pageWidth - margin - 31, y, { align: 'right' });
+            pdf.text(formatCurrency(item.price * item.quantity), pageWidth - margin, y, { align: 'right' });
+            y += rowHeight;
+            pdf.setDrawColor(226, 232, 240);
+            pdf.line(margin, y, pageWidth - margin, y);
+            y += 5;
+        });
+
+        ensureSpace(28);
+        y += 2;
+        const summaryRows = [
+            ['Subtotal:', lastOrder.subtotal],
+            ['IVA (16%):', lastOrder.tax],
+            ['Total pagado:', lastOrder.total]
+        ];
+
+        summaryRows.forEach(([label, amount], index) => {
+            pdf.setFont('helvetica', index === 2 ? 'bold' : 'normal');
+            pdf.setFontSize(index === 2 ? 12 : 10);
+            pdf.setTextColor(index === 2 ? 13 : 71, index === 2 ? 124 : 85, index === 2 ? 199 : 105);
+            pdf.text(label, pageWidth - margin - 60, y);
+            pdf.text(formatCurrency(amount), pageWidth - margin, y, { align: 'right' });
+            y += index === 2 ? 8 : 6;
+        });
+
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(8);
+        pdf.setTextColor(148, 163, 184);
+        pdf.text('Gracias por elegir NVENTIA.', margin, pageHeight - 12);
+
+        pdf.save(`comprobante-${lastOrder.orderId}.pdf`);
+        showToast('Comprobante descargado', 'El PDF de tu compra ya está listo');
     }
 
     function finishAndReset() {
@@ -367,7 +511,7 @@
             'increase': () => updateQuantity(productId, 1),
             'checkout': openCheckoutModal,
             'close-checkout': closeCheckoutModal,
-            'copy-receipt': copyReceipt,
+            'generate-receipt': generateReceipt,
             'finish-reset': finishAndReset,
             'switch-tab': () => switchMockupTab(tab),
             'explore-pricing': () => {
