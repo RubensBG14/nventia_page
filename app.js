@@ -8,7 +8,7 @@
             id: 'plan-basic',
             name: 'Plan NVENTIA BASIC',
             billing: '/ semana',
-            price: 100,
+            price: 400,
             badge: 'BASIC',
             description: 'Hasta 200 activos • Panel básico • 1 usuario'
         },
@@ -16,7 +16,7 @@
             id: 'plan-pro',
             name: 'Plan NVENTIA PRO',
             billing: '/ mes',
-            price: 600,
+            price: 1200,
             badge: 'MÁS POPULAR',
             description: 'Activos ilimitados • Tiempo real • API REST'
         },
@@ -24,7 +24,7 @@
             id: 'plan-ultra',
             name: 'Plan NVENTIA ULTRA',
             billing: '/ año',
-            price: 2500,
+            price: 12000,
             badge: 'ENTERPRISE',
             description: 'Sin límites • SLA 99.9% • Gestor exclusivo'
         },
@@ -32,7 +32,7 @@
             id: 'addon-qr',
             name: 'Kit 500 Etiquetas QR/Metal',
             billing: 'pago único',
-            price: 85,
+            price: 1700,
             badge: 'INSUMO',
             description: 'Etiquetas industriales homologadas'
         },
@@ -40,7 +40,7 @@
             id: 'addon-scanner',
             name: 'Terminal Lector RFID/QR',
             billing: 'pago único',
-            price: 320,
+            price: 6400,
             badge: 'HARDWARE',
             description: 'Escáner inalámbrico sincronizable'
         },
@@ -48,7 +48,7 @@
             id: 'addon-migration',
             name: 'Migración y Homologación',
             billing: 'servicio',
-            price: 250,
+            price: 5000,
             badge: 'SERVICIO',
             description: 'Carga y normalización inicial de datos'
         }
@@ -62,7 +62,9 @@
     const getElement = (id) => document.getElementById(id);
 
     function formatCurrency(amount) {
-        return '$' + amount.toLocaleString('en-US', {
+        return amount.toLocaleString('es-MX', {
+            style: 'currency',
+            currency: 'MXN',
             minimumFractionDigits: amount % 1 === 0 ? 0 : 2,
             maximumFractionDigits: 2
         });
